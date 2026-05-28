@@ -38,18 +38,52 @@ pygame.display.set_caption('Змейка')
 # Настройка времени:
 clock = pygame.time.Clock()
 
-
 # Тут опишите все классы игры.
-...
+class GameObject:
+    """
+    Базовый класс для всех игровых объектов
+    """
+    def __init__(
+        self, 
+        body_color: tuple[int, int, int]
+    ):
+        self.position = [GRID_WIDTH // 2, GRID_HEIGHT // 2]
+        self.body_color = body_color
+    
+    def draw(self):
+        pass
+
+class Apple(GameObject):
+    """Класс для представления яблока
+    Наследует от GameObject"""
+    def __init__(self):
+        super().__init__(body_color = APPLE_COLOR)
+        self.randomize_position()
+
+    def randomize_position(self):
+        self.position = (randint(0, GRID_WIDTH - 1) * GRID_SIZE, 
+                        randint(0, GRID_HEIGHT - 1) * GRID_SIZE)
+    
+    def draw(self):
+        rect = pygame.Rect(self.position, (GRID_SIZE, GRID_SIZE))
+        pygame.draw.rect(screen, self.body_color, rect)
+#       pygame.draw.rect(screen, BORDER_COLOR, rect, 1)
+
+class Snake(GameObject):
+    pass
 
 
 def main():
     # Инициализация PyGame:
     pygame.init()
+    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    clock = pygame.time.Clock() 
     # Тут нужно создать экземпляры классов.
-    ...
+    apple = Apple(APPLE_COLOR)
+    snake = Snake(SNAKE_COLOR)
 
-    # while True:
+    while True:
+        pass
     #     clock.tick(SPEED)
 
         # Тут опишите основную логику игры.
