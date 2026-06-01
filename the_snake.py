@@ -137,9 +137,10 @@ class Snake(GameObject):
     def move(self):
         """Движение Змеи"""
         head_x, head_y = self.get_head_position()
-        new_head = ((head_x + self.direction[0]
+        dir_x, dir_y = self.direction
+        new_head = ((head_x + dir_x
                      * GRID_SIZE + SCREEN_WIDTH) % SCREEN_WIDTH,
-                    (head_y + self.direction[1]
+                    (head_y + dir_y
                      * GRID_SIZE + SCREEN_HEIGHT) % SCREEN_HEIGHT)
         self.positions.insert(0, new_head)
         self.last = (
@@ -150,9 +151,13 @@ class Snake(GameObject):
 
     def draw(self):
         """Отрисовка Змеи на игровом поле"""
-        for position in self.positions:
-            if self.last is None or self.last != position:
-                self.draw_rect(position)
+        # Отрисовка головы змейки
+        self.draw_rect(self.get_head_position())
+
+        # Затирание последнего сегмента
+        if self.last:
+            last_rect = pg.Rect(self.last, (GRID_SIZE, GRID_SIZE))
+            pg.draw.rect(screen, BOARD_BACKGROUND_COLOR, last_rect)
 
     def update_direction(self, next_direction: tuple[int, int]):
         """Метод обновления направления после нажатия на кнопку"""
@@ -182,16 +187,17 @@ def main():
     # Cоздаются экземпляры классов
     snake = Snake()
     apple = Apple(occupied_positions=snake.positions)
+    screen.fill(BOARD_BACKGROUND_COLOR)
 
     #  Основная логика игры
     while True:
         handle_keys(game_object=snake)
-        screen.fill(BOARD_BACKGROUND_COLOR)
         if snake.get_head_position() == apple.position:
             snake.length += 1
             apple.randomize_position(snake.positions)
         elif snake.get_head_position() in snake.positions[1:]:
             snake.reset()
+            screen.fill(BOARD_BACKGROUND_COLOR)
         snake.move()
         apple.draw()
         snake.draw()
